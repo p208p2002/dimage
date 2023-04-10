@@ -28,10 +28,8 @@ RUN chmod 777 /docker_start.sh
 
 USER $USERNAME
 
-ENV HOME  /home/$USERNAME
-ENV PATH="${PATH}:/home/${USERNAME}/.local/bin:/opt/conda/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
-ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+RUN env | egrep -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=)" >> /home/${USERNAME}/.container_env
+RUN echo 'export $(cat .container_env | xargs)' > /home/${USERNAME}/.bashrc
 
 RUN pip install poetry
 
