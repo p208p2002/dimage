@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.1.0-devel-ubuntu20.04
+FROM pytorch/pytorch:2.0.0-cuda11.7-cudnn8-devel
 
 ENV USERNAME dimage
 RUN useradd -ms /bin/bash $USERNAME
@@ -28,22 +28,11 @@ RUN chmod 777 /docker_start.sh
 
 USER $USERNAME
 
-ENV PATH="${PATH}:/usr/local/nvidia/bin:/usr/local/cuda/bin"
-
-RUN sudo apt-get update && sudo apt-get install -y git curl libssl-dev libreadline-dev zlib1g-dev liblzma-dev
-RUN curl https://pyenv.run | bash && \
-    echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-
 ENV HOME  /home/$USERNAME
-ENV PYENV_ROOT $HOME/.pyenv
-ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+ENV PATH="${PATH}:/opt/conda/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs
 
-RUN pyenv install 3.8.10 && \
-    pyenv global 3.8.10 && \
-    pyenv rehash
-
-RUN pip install poetry light-the-torch
+RUN pip install poetry
 
 ENTRYPOINT /docker_start.sh && /bin/bash
