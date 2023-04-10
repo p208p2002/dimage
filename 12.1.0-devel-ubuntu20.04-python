@@ -31,7 +31,7 @@ WORKDIR /home/${USERNAME}
 
 RUN env | egrep -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=)" >> .container_env
 RUN cp /etc/skel/.bashrc .
-RUN echo "export \$(cat /home/${USERNAME}}/.container_env | xargs)" >> .bashrc
+RUN echo "export \$(cat /home/${USERNAME}/.container_env | xargs)" >> .bashrc
 RUN echo "PATH=\"/home/${USERNAME}/.local/bin:$PATH\"" >> .bashrc
 
 RUN pip install poetry
