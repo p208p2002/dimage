@@ -3,7 +3,7 @@ FROM pytorch/pytorch:2.0.0-cuda11.7-cudnn8-devel
 ENV USERNAME dimage
 RUN useradd -ms /bin/bash $USERNAME
 RUN usermod -aG sudo $USERNAME
-RUN echo "deb [by-hash=no] http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list
+# RUN echo "deb [by-hash=no] http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list
 RUN apt-get update && apt-get install -y sudo
 
 # 禁用sudo密碼
@@ -14,11 +14,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Taipei
 RUN apt-get update && apt-get install -y tzdata
 
-# ip、ping
-RUN apt-get install -y net-tools iputils-ping
-
 # ssh
-RUN apt-get install -y openssh-server wget
+RUN apt-get install -y openssh-server 
 COPY ssh_config /etc/ssh/ssh_config
 RUN service ssh restart
 
@@ -29,11 +26,16 @@ RUN chmod 777 /docker_start.sh
 USER $USERNAME
 WORKDIR /home/${USERNAME}
 
+# tools, package
+RUN sudo apt-get update &&\
+    sudo apt-get install -y net-tools iputils-ping wget curl git git-lfs htop &&\
+    git lfs install
+
 RUN env | egrep -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=)" >> .container_env
 RUN cp /etc/skel/.bashrc .
 RUN echo "export \$(cat /home/${USERNAME}/.container_env | xargs)" >> .bashrc
 RUN echo "PATH=\"/home/${USERNAME}/.local/bin:$PATH\"" >> .bashrc
 
-RUN pip install poetry
+RUN pip install poetry 
 
 ENTRYPOINT /docker_start.sh && /bin/bash
