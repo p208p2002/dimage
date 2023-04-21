@@ -30,6 +30,9 @@ RUN sudo apt-get update &&\
     sudo apt-get install -y net-tools iputils-ping wget curl git git-lfs htop vim&&\
     git lfs install
 
+# dependence
+RUN sudo apt-install -y libaio-dev
+
 RUN env | egrep -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=)" >> .container_env
 RUN echo "export \$(cat /home/${USERNAME}/.container_env | xargs)" >> .bashrc
 
