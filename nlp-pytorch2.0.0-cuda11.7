@@ -31,7 +31,7 @@ RUN sudo apt-get update &&\
     git lfs install
 
 # dependence
-RUN sudo apt-get install -y libaio-dev
+RUN sudo apt-get install -y libaio-dev ninja-build
 
 RUN env | egrep -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=)" >> .container_env
 RUN echo "export \$(cat /home/${USERNAME}/.container_env | xargs)" >> .bashrc
